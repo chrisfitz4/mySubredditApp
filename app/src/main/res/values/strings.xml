@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">Reddit_java</string>
+    <string name="search">SEARCH</string>
+    <string name="mail">Mail</string>
+    <string name="copy">Copy</string>
+    <string name="cancel">Cancel</string>
+    <string name="comments">%1$d Comments</string>
+    <string name="ups">%1$d Ups</string>
+    <string name="downs">%1$d Downs</string>
+</resources>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="image_view_dimen">80dp</dimen>
+    <dimen name="frag_marg_vert">24dp</dimen>
+    <dimen name="padding">8dp</dimen>
+</resources>
