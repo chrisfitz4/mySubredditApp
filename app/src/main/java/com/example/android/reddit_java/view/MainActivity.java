@@ -5,6 +5,8 @@ import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatButton;
 import androidx.appcompat.widget.SearchView;
+import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProviders;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -44,6 +46,7 @@ public class MainActivity extends AppCompatActivity implements RVAdapter.Delegat
     RVAdapter adapter;
     Button button;
     SearchView searchView;
+    MutableLiveData<List<Child>> liveData;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,7 +58,6 @@ public class MainActivity extends AppCompatActivity implements RVAdapter.Delegat
         searchView = findViewById(R.id.search_view);
         RecyclerView.ItemDecoration decoration = new RVDivider(this,getDrawable(R.drawable.divider));
 
-
         searchView.setQuery("funny",true);
         recyclerView.addItemDecoration(decoration);
         adapter = new RVAdapter(new ArrayList<Child>(),this.getApplicationContext(),this);
@@ -63,33 +65,42 @@ public class MainActivity extends AppCompatActivity implements RVAdapter.Delegat
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         viewModel = ViewModelProviders.of(this).get(MyViewModel.class);
+        liveData = viewModel.getLiveData();
 
-        //viewModel.test();
-
-        viewModel.resultCallback("funny").enqueue(new Callback<RepoResult>() {
+        viewModel.getLiveData().observe(this, new Observer<List<Child>>() {
             @Override
-            public void onResponse(Call<RepoResult> call, Response<RepoResult> response) {
-                if(response.body().getData()!=null) {
-                    Log.d("TAG_X", "onResponse: " + response.body().getData().getChildren().toString());
-                    adapter.setChildList(response.body().getData().getChildren());
-                    adapter.notifyDataSetChanged();
-                }else{
-                    Log.d("TAG_X", "onResponse: is null");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RepoResult> call, Throwable t) {
-                Log.d("TAG_X", "onFailure: "+t.getMessage());
+            public void onChanged(List<Child> children) {
+                adapter.setChildList(children);
+                adapter.notifyDataSetChanged();
             }
         });
+
+        viewModel.test("funny");
+
+//        viewModel.resultCallback("funny").enqueue(new Callback<RepoResult>() {
+//            @Override
+//            public void onResponse(Call<RepoResult> call, Response<RepoResult> response) {
+//                if(response.body().getData()!=null) {
+//                    Log.d("TAG_X", "onResponse: " + response.body().getData().getChildren().toString());
+//                    adapter.setChildList(response.body().getData().getChildren());
+//                    adapter.notifyDataSetChanged();
+//                }else{
+//                    Log.d("TAG_X", "onResponse: is null");
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<RepoResult> call, Throwable t) {
+//                Log.d("TAG_X", "onFailure: "+t.getMessage());
+//            }
+//        });
 
         button.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 String text = searchView.getQuery().toString();
                 if(!text.equals(""))
-                    changeData(text);
+                    viewModel.test(text);
                 try {
                     ((InputMethodManager) getSystemService(Activity.INPUT_METHOD_SERVICE))
                             .hideSoftInputFromWindow(button.getWindowToken(), 0);
@@ -101,25 +112,25 @@ public class MainActivity extends AppCompatActivity implements RVAdapter.Delegat
 
     }
 
-    private void changeData(String toSearch){
-        viewModel.resultCallback(toSearch).enqueue(new Callback<RepoResult>() {
-            @Override
-            public void onResponse(Call<RepoResult> call, Response<RepoResult> response) {
-                if(response.body().getData()!=null){
-                    Log.d("TAG_X", "onResponse: "+response.body().getData().getChildren().toString());
-                    adapter.setChildList(response.body().getData().getChildren());
-                    adapter.notifyDataSetChanged();
-                }else{
-                    Log.d("TAG_X", "onResponse: is null");
-                }
-            }
-
-            @Override
-            public void onFailure(Call<RepoResult> call, Throwable t) {
-                Log.d("TAG_X", "onFailure: "+t.getMessage());
-            }
-        });
-    }
+//    private void changeData(String toSearch){
+//        viewModel.resultCallback(toSearch).enqueue(new Callback<RepoResult>() {
+//            @Override
+//            public void onResponse(Call<RepoResult> call, Response<RepoResult> response) {
+//                if(response.body().getData()!=null){
+//                    Log.d("TAG_X", "onResponse: "+response.body().getData().getChildren().toString());
+//                    adapter.setChildList(response.body().getData().getChildren());
+//                    adapter.notifyDataSetChanged();
+//                }else{
+//                    Log.d("TAG_X", "onResponse: is null");
+//                }
+//            }
+//
+//            @Override
+//            public void onFailure(Call<RepoResult> call, Throwable t) {
+//                Log.d("TAG_X", "onFailure: "+t.getMessage());
+//            }
+//        });
+//    }
 
     @Override
     public void onClick(Data_ data_) {
@@ -132,5 +143,11 @@ public class MainActivity extends AppCompatActivity implements RVAdapter.Delegat
                 .add(R.id.frag_container,fragment)
                 .addToBackStack(fragment.getTag())
                 .commit();
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        liveData.removeObservers(this);
     }
 }

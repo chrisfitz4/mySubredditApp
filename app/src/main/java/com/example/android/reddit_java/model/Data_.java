@@ -133,7 +133,7 @@ public class Data_ implements Parcelable {
     private String thumbnail;
     @SerializedName("edited")
     @Expose
-    private Boolean edited;
+    private Object edited;
     @SerializedName("author_flair_css_class")
     @Expose
     private Object authorFlairCssClass;
@@ -808,11 +808,11 @@ public class Data_ implements Parcelable {
         this.thumbnail = thumbnail;
     }
 
-    public Boolean getEdited() {
+    public Object getEdited() {
         return edited;
     }
 
-    public void setEdited(Boolean edited) {
+    public void setEdited(Object edited) {
         this.edited = edited;
     }
 
@@ -1394,7 +1394,7 @@ public class Data_ implements Parcelable {
         }
         dest.writeByte((byte) (authorPremium == null ? 0 : authorPremium ? 1 : 2));
         dest.writeString(thumbnail);
-        dest.writeByte((byte) (edited == null ? 0 : edited ? 1 : 2));
+        dest.writeByte((byte) (edited == null ? 0 : 1));
         dest.writeByte((byte) (isSelf == null ? 0 : isSelf ? 1 : 2));
         if (created == null) {
             dest.writeByte((byte) 0);

@@ -17,12 +17,11 @@ import androidx.recyclerview.widget.RecyclerView;
 public class RVDivider extends DividerItemDecoration {
 
 
-    private final int OFFSET = 1;
+    private final int OFFSET = 3;
     private int VERTICAL_OFFSET;
     private final int MARGIN = 64;
     private final int HORIZONTAL_OFFSET = 96;
     private Drawable mDivider ;
-
 
     public RVDivider(Context context, Drawable drawable) {
         super(context, RecyclerView.HORIZONTAL);

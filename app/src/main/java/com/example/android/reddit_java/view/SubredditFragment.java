@@ -73,6 +73,7 @@ public class SubredditFragment extends Fragment {
                 toSend = String.format(toSend,data_.getAuthor(),data_.getTitle());
                 Log.d("TAG_X", "onClick: "+toSend);
                 Intent intent = new Intent(Intent.ACTION_SENDTO);
+                //intent.setType("text/plain");
                 intent.setData(Uri.parse("mailto:"));
                 intent.putExtra(Intent.EXTRA_TEXT,toSend);
                 try {
